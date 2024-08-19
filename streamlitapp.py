@@ -51,7 +51,7 @@ def retrieveAndGenerate(input_text, kb_id, model_arn, session_id=""):
 
 # Set up the Streamlit app
 st.title("GeoComply Client Portal Chatbot")
-st.write("Chat with the Bedrock-powered AI below:")
+st.write("Chat with the demo AI chatbot, any question or recommendation please contact yuan.liu@geocomply.com ")
 
 # Session state to store chat history and session ID
 if "chat_history" not in st.session_state:
