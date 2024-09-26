@@ -2,6 +2,8 @@ import streamlit as st
 import boto3
 import json
 import os
+import re
+import html  # For decoding HTML entities
 
 # Configure AWS credentials using environment variables
 aws_access_key_id = os.getenv('AWS_ACCESS_KEY_ID')
@@ -49,6 +51,33 @@ def retrieveAndGenerate(input_text, kb_id, model_arn, session_id=""):
 
     return response
 
+# Function to split text by code snippets
+def split_text_by_code(text):
+    # Split the text by <pre><code>...</code></pre> and ```...``` blocks
+    split_text = re.split(r'(<pre><code>.*?</code></pre>|```.*?```)', text, flags=re.DOTALL)
+    return split_text
+
+# Function to display text and code snippets in order
+def display_message(message):
+    bot_response = message['bot']
+
+    # Split the response by code and text
+    split_content = split_text_by_code(bot_response)
+
+    for part in split_content:
+        if part.startswith('<pre><code>') and part.endswith('</code></pre>'):
+            # Extract and decode the code inside <pre><code>
+            code_content = re.search(r'<pre><code>(.*?)</code></pre>', part, re.DOTALL).group(1)
+            decoded_code = html.unescape(code_content.strip())
+            st.code(decoded_code, language='html')  # Adjust language as needed
+        elif part.startswith('```') and part.endswith('```'):
+            # Extract code inside ```
+            code_content = part.strip('```').strip()
+            st.code(code_content, language='html')  # Adjust language as needed
+        else:
+            # Regular text
+            st.write(part.strip())
+
 # Set up the Streamlit app
 st.title("GeoComply Client Portal Chatbot")
 st.write("Chat with the demo AI chatbot, any question or recommendation please contact yuan.liu@geocomply.com ")
@@ -81,11 +110,10 @@ def send_message():
         # Clear the input box after submission
         st.session_state.user_input = ""
 
-# Display chat history
+# Display chat history with code detection
 for message in st.session_state.chat_history:
     st.write(f"**You:** {message['user']}")
-    st.write(f"**Chatbot:** {message['bot']}")
+    display_message(message)
 
 # Input box for user query with on_change callback
 st.text_input("Your message:", key="user_input", on_change=send_message)
-
