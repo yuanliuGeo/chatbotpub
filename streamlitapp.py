@@ -8,6 +8,7 @@ import html  # For decoding HTML entities
 # Configure AWS credentials using environment variables
 aws_access_key_id = os.getenv('AWS_ACCESS_KEY_ID')
 aws_secret_access_key = os.getenv('AWS_SECRET_ACCESS_KEY')
+
 region_name = os.getenv('AWS_REGION', 'us-east-1')  # Default to 'us-east-1' if not set
 
 # Create a Bedrock Agent Runtime client in the AWS Region you want to use.
@@ -88,12 +89,18 @@ if "chat_history" not in st.session_state:
 if "session_id" not in st.session_state:
     st.session_state.session_id = ""
 
-# Function to handle sending a message
+# Function to handle sending a message with a prompt
 def send_message():
     user_input = st.session_state.user_input
     if user_input:
-        # Call the retrieveAndGenerate function
-        response = retrieveAndGenerate(user_input, knowledge_base_id, model_arn, st.session_state.session_id)
+        # Define your prompt
+        prompt = "You are an AI chatbot specialized in providing detailed assistance with GeoComply's Client Portal. Respond thoroughly to user queries. When relevant, provide clear and concise code snippets. Structure your responses to enhance user understanding."
+
+        # Combine the prompt and user input
+        full_input = f"{prompt}\n\nUser: {user_input}\nChatbot:"
+
+        # Call the retrieveAndGenerate function with the combined prompt and user input
+        response = retrieveAndGenerate(full_input, knowledge_base_id, model_arn, st.session_state.session_id)
 
         # Extract the output text from the response
         try:
