@@ -18,7 +18,7 @@ bedrock_agent_runtime_client = boto3.client(
 
 # Set the model ID, e.g., Titan Text Premier.
 model_id = "anthropic.claude-3-haiku-20240307-v1:0"
-knowledge_base_id = os.getenv('KNOWLEDGE_BASE_ID', "H3RPTM29IN")  # Replace with your knowledge base ID or use env var
+knowledge_base_id = os.getenv('KNOWLEDGE_BASE_ID', "OWMDKF0HOE")  # Replace with your knowledge base ID or use env var
 model_arn = f'arn:aws:bedrock:{region_name}::foundation-model/{model_id}'
 
 # Function to interact with Bedrock's retrieve_and_generate API
